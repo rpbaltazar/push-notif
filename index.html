@@ -1,0 +1,32 @@
+<body>
+  <h1>Hello</h1>
+  <button id="subscribe">Subscribe</button>
+</body>
+
+<script>
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+      console.log('Service Worker registered')
+    })
+
+    var vapidPublicKey = new Uint8Array([4, 241, 223, 66, 224, 3, 100, 64, 146, 196, 55, 83, 194, 0, 9, 156, 131, 200,
+    88, 121, 179, 218, 128, 181, 113, 207, 144, 222, 190, 14, 148, 248, 72, 162, 165, 135, 14, 84, 117, 69, 239, 20,
+    230, 19, 41, 173, 138, 148, 73, 28, 206, 242, 176, 156, 42, 167, 125, 215, 46, 223, 41, 194, 27, 210, 165]);
+
+    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+      serviceWorkerRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: vapidPublicKey
+      });
+    });
+  }
+
+  document.getElementById('subscribe').onclick = function(e) {
+    navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
+      serviceWorkerRegistration.pushManager.getSubscription().then((subscription) => {
+        console.log(subscription.toJSON());
+        // $.post("/push", { subscription: subscription.toJSON(), message: "You clicked a button!" });
+      });
+    });
+  };
+</script>
